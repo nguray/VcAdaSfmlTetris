@@ -32,10 +32,6 @@ package TetrisShape is
     function minX(Self : in out Tetromino) return sfInt32;
     function maxX(Self : in out Tetromino) return sfInt32;
     function maxY(Self : in out Tetromino) return sfInt32;
-    function checkLeftLimit(Self : in out Tetromino) return Boolean;
-    function checkRightLimit(Self : in out Tetromino) return Boolean;
-    function checkBottomLimit(Self : in out Tetromino) return Boolean;
-    function hitGround(Self : in out Tetromino; board : in arrBoard) return Boolean;
     function Column(Self : in Tetromino) return Integer;
 
 end TetrisShape;

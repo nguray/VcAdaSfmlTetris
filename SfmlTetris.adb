@@ -92,18 +92,20 @@ procedure SfmlTetris is
     use type Event.sfEventType;
     use type Keyboard.sfKeyCode;
 
+    type isOutLimit_t is access function(tetro : in out Tetromino) return Boolean;
+    isOutLimit : isOutLimit_t; 
 
     type ProcessEvent_Type is access procedure(win : sfRenderWindow_Ptr;evt : in Event.sfEvent);
     processEvent : ProcessEvent_Type; 
 
-    GameFont: sfFont_Ptr;
-    textScore: sfText_Ptr;
-    successSoundBuffer: sfSoundBuffer_Ptr;
-    successSound: sfSound_Ptr;
-    tetrisMusic : sfMusic_Ptr;
+    GameFont            : sfFont_Ptr;
+    textScore           : sfText_Ptr;
+    successSoundBuffer  : sfSoundBuffer_Ptr;
+    successSound        : sfSound_Ptr;
+    tetrisMusic         : sfMusic_Ptr;
 
-    curTetromino : Tetromino;
-    nextTetromino : Tetromino;
+    curTetromino        : Tetromino;
+    nextTetromino       : Tetromino;
 
     function TetrisRandomizer return Integer is
         ityp : Integer;
@@ -132,6 +134,79 @@ procedure SfmlTetris is
         end if;
         return ityp;
     end TetrisRandomizer;
+
+    function isOutLeftLimit( tetro : in out Tetromino) return Boolean is
+        l : sfInt32;
+    begin
+        l := tetro.minX*Game.CELL_SIZE + tetro.x;
+        return l < 0;
+    end isOutLeftLimit;
+
+    function isOutRightLimit(tetro : in out Tetromino) return Boolean is
+        r : sfInt32;
+    begin
+        r := tetro.maxX*Game.CELL_SIZE + Game.CELL_SIZE + tetro.x;
+        return r > (Game.NB_COLUMNS*Game.CELL_SIZE);
+    end isOutRightLimit;
+
+    function isOutBottomLimit(tetro : in out Tetromino) return Boolean is
+        b : sfInt32;
+    begin
+        b := tetro.maxY*Game.CELL_SIZE + Game.CELL_SIZE + tetro.y;
+        return b > (Game.NB_ROWS*Game.CELL_SIZE);
+    end isOutBottomLimit;
+
+    function hitGround(tetro : in out Tetromino; board : in Game.arrBoard) return Boolean is
+        ix,iy     : Integer;
+        sx,sy     : Integer;
+    begin
+
+        for p of tetro.v loop
+
+            sx := Integer(p.x*Game.CELL_SIZE + tetro.x + 1);
+            sy := Integer(p.y*Game.CELL_SIZE + tetro.y + 1);
+            ix := sx/Game.CELL_SIZE;
+            iy := sy/Game.CELL_SIZE;
+            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
+                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
+                    return True;
+                end if;
+            end if;
+
+            sx := Integer(p.x*Game.CELL_SIZE + Game.CELL_SIZE -1 + tetro.x);
+            sy := Integer(p.y*Game.CELL_SIZE + tetro.y + 1);
+            ix := sx/Game.CELL_SIZE;
+            iy := sy/Game.CELL_SIZE;
+            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
+                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
+                    return True;
+                end if;
+            end if;
+
+            sx := Integer(p.x*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.x);
+            sy := Integer(p.y*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.y);
+            ix := sx/Game.CELL_SIZE;
+            iy := sy/Game.CELL_SIZE;
+            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
+                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
+                    return True;
+                end if;
+            end if;
+
+            sx := Integer(p.x*Game.CELL_SIZE + tetro.x + 1);
+            sy := Integer(p.y*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.y);
+            ix := sx/Game.CELL_SIZE;
+            iy := sy/Game.CELL_SIZE;
+            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
+                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
+                    return True;
+                end if;
+            end if;
+
+        end loop;
+
+        return False;
+    end hitGround;
 
     procedure drawBoard(render : sfRenderWindow_Ptr) is
         t     : Integer;
@@ -380,9 +455,11 @@ procedure SfmlTetris is
                     when  Keyboard.sfKeyLeft =>
                         --
                         veloH := -1;
+                        isOutLimit := isOutLeftLimit'Access;
                     when Keyboard.sfKeyRight =>
                         --
                         veloH := 1;
+                        isOutLimit := isOutRightLimit'Access;
                     when Keyboard.sfKeySpace =>
                         --
                         fDrop := True;
@@ -730,13 +807,10 @@ begin
                     curGameMode := HIGH_SCORES;
                     processEvent := processHighScoresEvent'Access;
                     initGame;
-
                 else
-
                     curGameMode := STAND_BY;
                     processEvent := processStandByEvent'Access;
                     initGame;
-
                 end if;
             end if;
         end loop;
@@ -765,29 +839,22 @@ begin
                         for i in 1..4 loop
                             backupX := curTetromino.x;
                             curTetromino.x := curTetromino.x + horizontalMove;
-                            if horizontalMove<0 then
-                                if curTetromino.checkLeftLimit then
-                                    curTetromino.x := backupX;
-                                    horizontalMove := 0;
-                                    exit;
-                                else
-                                    if curTetromino.hitGround(board) then
-                                        curTetromino.x := backupX;
-                                        horizontalMove := 0;
-                                        exit;                                
-                                    end if;
-                                end if;
+
+                            if horizontalMove < 0 then
+                                isOutLimit := isOutLeftLimit'Access;
                             elsif horizontalMove>0 then
-                                if curTetromino.checkRightLimit then
+                                isOutLimit := isOutRightLimit'Access;
+                            end if;
+
+                            if isOutLimit(curTetromino) then
+                                curTetromino.x := backupX;
+                                horizontalMove := 0;
+                                exit;
+                            else
+                                if hitGround(curTetromino,board) then
                                     curTetromino.x := backupX;
                                     horizontalMove := 0;
-                                    exit;
-                                else
-                                    if curTetromino.hitGround(board) then
-                                        curTetromino.x := backupX;
-                                        horizontalMove := 0;
-                                        exit;                                
-                                    end if;
+                                    exit;                                
                                 end if;
                             end if;
 
@@ -814,12 +881,12 @@ begin
                     for i in 1..6 loop
                         -- Move Down
                         curTetromino.y := curTetromino.y + 1;
-                        if curTetromino.hitGround(board) then
+                        if hitGround(curTetromino, board) then
                             curTetromino.y := curTetromino.y - 1;
                             FreezeCurTetromino;
                             NewTetromino;
                             fDrop := False;                    
-                        elsif curTetromino.checkBottomLimit then
+                        elsif isOutBottomLimit(curTetromino) then
                             curTetromino.y := curTetromino.y - 1;
                             FreezeCurTetromino;
                             NewTetromino;
@@ -834,25 +901,16 @@ begin
                                     begin
                                         backupX := curTetromino.x;
                                         curTetromino.x := curTetromino.x + veloH;
-                                        if veloH<0 then
-                                            if curTetromino.checkLeftLimit then
-                                                curTetromino.x := backupX;
-                                            else
-                                                elapseH := Clock.restart(HTimer);
-                                                horizontalMove := veloH;
-                                                horizontalMoveStartColumn := curTetromino.Column;
-                                                exit;
-                                            end if;
-                                        elsif veloH>0 then
-                                            if curTetromino.checkRightLimit then
-                                                curTetromino.x := backupX;
-                                            else
-                                                elapseH := Clock.restart(HTimer);
-                                                horizontalMove := veloH;
-                                                horizontalMoveStartColumn := curTetromino.Column;
-                                                exit;
-                                            end if;
+
+                                        if isOutLimit(curTetromino) then
+                                            curTetromino.x := backupX;
+                                        else
+                                            elapseH := Clock.restart(HTimer);
+                                            horizontalMove := veloH;
+                                            horizontalMoveStartColumn := curTetromino.Column;
+                                            exit;
                                         end if;
+
                                     end;
                                 end if;
                             end if;
@@ -879,12 +937,12 @@ begin
                             curTetromino.y := curTetromino.y + 1;
                             fMove := True;
 
-                            if curTetromino.hitGround(board) then
+                            if hitGround(curTetromino,board) then
                                 curTetromino.y := curTetromino.y - 1;
                                 FreezeCurTetromino;
                                 NewTetromino;
                                 fMove := False;
-                            elsif curTetromino.checkBottomLimit then
+                            elsif isOutBottomLimit(curTetromino) then
                                 curTetromino.y := curTetromino.y - 1;
                                 FreezeCurTetromino;
                                 NewTetromino;
@@ -898,36 +956,22 @@ begin
                                         declare
                                             backupX : sfInt32;
                                         begin
-                                            
                                             backupX := curTetromino.x;
                                             curTetromino.x := curTetromino.x + veloH;
-                                            if veloH<0 then
-                                                if curTetromino.checkLeftLimit then
-                                                    curTetromino.x := backupX;
+
+                                            if isOutLimit(curTetromino) then
+                                                curTetromino.x := backupX;
+                                            else
+                                                if hitGround(curTetromino,board) then
+                                                    curTetromino.x := backupX;                                             
                                                 else
-                                                    if curTetromino.hitGround(board) then
-                                                        curTetromino.x := backupX;                                             
-                                                    else
-                                                        elapseH := Clock.restart(HTimer);
-                                                        horizontalMove := veloH;
-                                                        horizontalMoveStartColumn := curTetromino.Column;
-                                                        exit;
-                                                    end if;
-                                                end if;
-                                            elsif veloH>0 then
-                                                if curTetromino.checkRightLimit then
-                                                    curTetromino.x := backupX;
-                                                else
-                                                    if curTetromino.hitGround(board) then
-                                                        curTetromino.x := backupX;                                             
-                                                    else
-                                                        elapseH := Clock.restart(HTimer);
-                                                        horizontalMove := veloH;
-                                                        horizontalMoveStartColumn := curTetromino.Column;
-                                                        exit;
-                                                    end if;
+                                                    elapseH := Clock.restart(HTimer);
+                                                    horizontalMove := veloH;
+                                                    horizontalMoveStartColumn := curTetromino.Column;
+                                                    exit;
                                                 end if;
                                             end if;
+
                                         end;
                                     end if;
                                 end if;
