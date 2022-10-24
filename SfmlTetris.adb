@@ -289,7 +289,7 @@ procedure SfmlTetris is
     begin
         Create(fich,Out_File,fileName);
         for i in Index_highScores loop
-            Put_Line(fich, To_String(hightScores(i).name) & ";" & hightScores(i).score'Image & ";");
+            Put_Line(fich, To_String(hightScores(i).name) & ";" & Ada.Strings.Fixed.Trim(hightScores(i).score'Image,Both) & ";");
         end loop;
         Close(fich);
 
@@ -667,6 +667,16 @@ begin
     KeyMap.Include(Integer(Keyboard.sfKeyNum7),'7');
     KeyMap.Include(Integer(Keyboard.sfKeyNum8),'8');
     KeyMap.Include(Integer(Keyboard.sfKeyNum9),'9');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad0),'0');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad1),'1');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad2),'2');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad3),'3');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad4),'4');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad5),'5');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad6),'6');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad7),'7');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad8),'8');
+    KeyMap.Include(Integer(Keyboard.sfKeyNumpad9),'9');
 
 
     Win := RenderWindow.Create(mode => (Game.WIN_WIDTH, Game.WIN_HEIGHT, 32), title => "Ada SFML Tetris");
@@ -977,7 +987,7 @@ begin
 
         nextTetromino.draw(Win);
         
-        -- Draw Score
+        -- Draw Current Score
         RenderWindow.DrawText (Win, textScore);
 
         --
@@ -985,7 +995,7 @@ begin
 
     end loop;
 
-    --
+    -- Free audio memory
     SoundBuffer.destroy(successSoundBuffer);
     Sound.destroy(successSound);
 
