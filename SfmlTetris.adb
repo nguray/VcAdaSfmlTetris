@@ -73,7 +73,6 @@ procedure SfmlTetris is
     tetrisBag : tetrisBag_t := (1,2,3,4,5,6,7,1,2,3,4,5,6,7);
     iTetrisBag : Integer := 14;
 
-
     veloH : sfInt32 := 0;
 
     horizontalMove : sfInt32 := 0;
@@ -155,6 +154,11 @@ procedure SfmlTetris is
         b := tetro.maxY*Game.CELL_SIZE + Game.CELL_SIZE + tetro.y;
         return b > (Game.NB_ROWS*Game.CELL_SIZE);
     end isOutBottomLimit;
+
+    function isAlwaysOutLimit(tetro : in out Tetromino) return Boolean is
+    begin
+        return True;
+    end isAlwaysOutLimit;
 
     function hitGround(tetro : in out Tetromino; board : in Game.arrBoard) return Boolean is
         ix,iy     : Integer;
@@ -436,6 +440,7 @@ procedure SfmlTetris is
     end eraseFirstCompletedLine;
 
     procedure processPlayEvent (win : sfRenderWindow_Ptr;evt : in Event.sfEvent) is
+        backupX : sfInt32;
     begin
         case Evt.eventType is
             when Event.sfEvtClosed =>
@@ -449,6 +454,43 @@ procedure SfmlTetris is
                     when  Keyboard.sfKeyUp =>
                         --
                         curTetromino.rotateLeft;
+
+                        if hitGround(curTetromino,board) then
+                            -- Undo Rotate
+                            curTetromino.rotateRight;
+                        elsif isOutRightLimit(curTetromino) then
+                            backupX := curTetromino.x;
+                            -- Move curTetromino inside board
+                            loop
+                                curTetromino.x := curTetromino.x - 1;
+                                if not isOutRightLimit(curTetromino) then
+                                    exit;
+                                end if;
+                            end loop;
+                            if hitGround(curTetromino,board) then
+                                -- Undo Move
+                                curTetromino.x := backupX;
+                                -- Undo Rotate
+                                curTetromino.rotateRight;
+                            end if;
+                        elsif isOutLeftLimit(curTetromino) then
+                            backupX := curTetromino.x;
+                            -- Move curTetromino inside board
+                            loop
+                                curTetromino.x := curTetromino.x + 1;
+                                if not isOutLeftLimit(curTetromino) then
+                                    exit;
+                                end if;
+                            end loop;
+                            if hitGround(curTetromino,board) then
+                                -- Undo Move
+                                curTetromino.x := backupX;
+                                -- Undo Rotate
+                                curTetromino.rotateRight;
+                            end if;
+                        end if;
+
+
                     when  Keyboard.sfKeyDown =>
                         --
                         fFastDown := True;
@@ -471,9 +513,11 @@ procedure SfmlTetris is
                     when  Keyboard.sfKeyLeft =>
                         --
                         veloH := 0;
+                        isOutLimit := isAlwaysOutLimit'Access;
                     when Keyboard.sfKeyRight =>
                         --
                         veloH := 0;
+                        isOutLimit := isAlwaysOutLimit'Access;
                    when  Keyboard.sfKeyDown =>
                         --
                         fFastDown := False;
@@ -786,7 +830,8 @@ begin
     
     initGame;
     curGameMode := STAND_BY;
-    processEvent := processStandByEvent'Access;
+    processEvent:= processStandByEvent'Access;
+    isOutLimit  := isAlwaysOutLimit'Access;
 
     HTimer := Clock.Create;
     VTimer := Clock.Create;
@@ -817,6 +862,7 @@ begin
 
         -- Update game state
         if curGameMode=PLAY then
+
             if nbCompledLines>0 then
                 --
                 elapseV := CLock.getElapsedTime(VTimer);
@@ -994,7 +1040,7 @@ begin
                     processEvent := processHighScoresEvent'Access;
                     initGame;
                 else
-                     curGameMode := GAME_OVER;
+                    curGameMode := GAME_OVER;
                     processEvent := processGameOverEvent'Access;
                     initGame;
                 end if;
