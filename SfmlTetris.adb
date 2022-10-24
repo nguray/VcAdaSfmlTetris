@@ -458,8 +458,10 @@ procedure SfmlTetris is
                         --
                     when others => 
                         if KeyMap.Contains(ik) then
-                            Ada.Strings.Unbounded.Append(playerName,KeyMap(ik));
-                            hightScores(idHighScore).name := playerName;
+                            if  Ada.Strings.Unbounded.Length(playerName) < 8 then
+                                Ada.Strings.Unbounded.Append(playerName,KeyMap(ik));
+                                hightScores(idHighScore).name := playerName;
+                            end if;
                         end if; 
 
                 end case;
