@@ -63,7 +63,8 @@ procedure SfmlTetris is
     idHighScore     : Integer := 0;
     iHighScoreColor : Integer := 0;
 
-    type highScores_t is array (1..10) of HightScore;
+    subtype Index_highScores is Integer range 1 .. 10;
+    type highScores_t is array (Index_highScores) of HightScore;
     hightScores : highScores_t := (others => (To_Unbounded_String("XXXXXX"),0));
 
     board : Game.arrBoard := (others => 0);
@@ -258,7 +259,7 @@ procedure SfmlTetris is
     function isHighScore(score : Integer) return Integer is
         s : Integer;
     begin
-        for i in 1..10 loop
+        for i in Index_highScores loop
             s := hightScores(i).score;
             if score>=hightScores(i).score then
                 return i;
@@ -271,7 +272,7 @@ procedure SfmlTetris is
         i : Integer;
     begin
         -- Shift down highScores array
-        i := 10;
+        i := Index_highScores'Last;
         while i>id loop
             --
             hightScores(i).name := hightScores(i-1).name;
@@ -287,7 +288,7 @@ procedure SfmlTetris is
         fich : File_Type;
     begin
         Create(fich,Out_File,fileName);
-        for i in 1..10 loop
+        for i in Index_highScores loop
             Put_Line(fich, To_String(hightScores(i).name) & ";" & hightScores(i).score'Image & ";");
         end loop;
         Close(fich);
@@ -319,9 +320,9 @@ procedure SfmlTetris is
         strLine : Unbounded_String;
         strWord : Unbounded_String;
     begin
-        i := 1;
+        i := Index_highScores'First;
         Open(fich,In_File,fileName);
-        while not End_Of_File(fich) and (i<=10) loop
+        while not End_Of_File(fich) and (i<=Index_highScores'Last) loop
             strLine := To_Unbounded_String(Get_Line(fich));
             ic := 1;
             strWord := parseWord(ic, strLine , ';');
