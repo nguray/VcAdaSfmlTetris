@@ -163,48 +163,47 @@ procedure SfmlTetris is
     function hitGround(tetro : in out Tetromino; board : in Game.arrBoard) return Boolean is
         ix,iy     : Integer;
         sx,sy     : Integer;
+
+        function hit(x : Integer; y : Integer) return Boolean is
+            ix,iy : Integer;
+        begin
+            ix := x/Game.CELL_SIZE;
+            iy := y/Game.CELL_SIZE;
+            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
+                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
+                    return True;
+                end if;
+            end if;
+            return False;
+        end hit;
+        pragma Inline (hit);
+
     begin
 
         for p of tetro.v loop
 
             sx := Integer(p.x*Game.CELL_SIZE + tetro.x + 1);
             sy := Integer(p.y*Game.CELL_SIZE + tetro.y + 1);
-            ix := sx/Game.CELL_SIZE;
-            iy := sy/Game.CELL_SIZE;
-            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
-                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
-                    return True;
-                end if;
+            if hit(sx, sy) then
+                return True;
             end if;
 
             sx := Integer(p.x*Game.CELL_SIZE + Game.CELL_SIZE -1 + tetro.x);
             sy := Integer(p.y*Game.CELL_SIZE + tetro.y + 1);
-            ix := sx/Game.CELL_SIZE;
-            iy := sy/Game.CELL_SIZE;
-            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
-                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
-                    return True;
-                end if;
+            if hit(sx, sy) then
+                return True;
             end if;
 
             sx := Integer(p.x*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.x);
             sy := Integer(p.y*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.y);
-            ix := sx/Game.CELL_SIZE;
-            iy := sy/Game.CELL_SIZE;
-            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
-                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
-                    return True;
-                end if;
+            if hit(sx, sy) then
+                return True;
             end if;
 
             sx := Integer(p.x*Game.CELL_SIZE + tetro.x + 1);
             sy := Integer(p.y*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.y);
-            ix := sx/Game.CELL_SIZE;
-            iy := sy/Game.CELL_SIZE;
-            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
-                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
-                    return True;
-                end if;
+            if hit(sx, sy) then
+                return True;
             end if;
 
         end loop;
@@ -630,7 +629,6 @@ procedure SfmlTetris is
         curScore := 0;
         Text.setString (textScore, "SCORE : " & Tail(curScore'Image(curScore'Img'First + 1 .. curScore'Img'Last),6,'0'));
     end initGame;
-
 
     procedure drawGameOverMode(render : sfRenderWindow_Ptr) is
         textLine  : sfText_Ptr;
