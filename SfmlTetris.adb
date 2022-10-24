@@ -37,10 +37,6 @@ procedure SfmlTetris is
     Win: sfRenderWindow_Ptr;
     Evt: Event.sfEvent;
     
-    subtype discreteRange_t is Integer range 0..13;
-    package RandomInt is new Ada.Numerics.Discrete_Random(discreteRange_t);
-    use RandomInt;
-    Gen : RandomInt.Generator;
 
     HTimer, VTimer, RTimer  : sfClock_Ptr;
     elapseH,elapseV,elapseR : Sf.System.Time.sfTime;
@@ -69,7 +65,11 @@ procedure SfmlTetris is
 
     board : Game.arrBoard := (others => 0);
 
-    type tetrisBag_t is array (0..13) of Integer;
+    subtype discreteRange_t is Integer range 0..13;
+    package RandomInt is new Ada.Numerics.Discrete_Random(discreteRange_t);
+    use RandomInt;
+    Gen : RandomInt.Generator;
+    type tetrisBag_t is array (discreteRange_t) of Integer;
     tetrisBag : tetrisBag_t := (1,2,3,4,5,6,7,1,2,3,4,5,6,7);
     iTetrisBag : Integer := 14;
 
@@ -109,7 +109,7 @@ procedure SfmlTetris is
         ityp : Integer;
         iSrc : Integer;
     begin
-        if iTetrisBag < 13 then
+        if iTetrisBag <= discreteRange_t'Last then
             ityp := tetrisBag(iTetrisBag);
             iTetrisBag := iTetrisBag + 1;
         else
@@ -117,8 +117,8 @@ procedure SfmlTetris is
             for i in 1..24 loop
                 iSrc := Random(Gen);
                 ityp := tetrisBag(iSrc);
-                tetrisBag(iSrc) := tetrisBag(0);
-                 tetrisBag(0) := ityp;
+                tetrisBag(iSrc) := tetrisBag(discreteRange_t'First);
+                 tetrisBag(discreteRange_t'First) := ityp;
             end loop;
 
             for it of tetrisBag loop
@@ -127,7 +127,7 @@ procedure SfmlTetris is
             end loop;
             New_Line;
 
-            ityp := tetrisBag(0);
+            ityp := tetrisBag(discreteRange_t'First);
             iTetrisBag := 1;
         end if;
         return ityp;
