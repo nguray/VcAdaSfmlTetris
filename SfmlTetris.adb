@@ -321,19 +321,23 @@ procedure SfmlTetris is
         strLine : Unbounded_String;
         strWord : Unbounded_String;
     begin
-        i := Index_highScores'First;
-        Open(fich,In_File,fileName);
-        while not End_Of_File(fich) and (i<=Index_highScores'Last) loop
-            strLine := To_Unbounded_String(Get_Line(fich));
-            ic := 1;
-            strWord := parseWord(ic, strLine , ';');
-            hightScores(i).name := strWord;
-            strWord := parseWord(ic, strLine , ';');
-            Ada.Strings.Unbounded.Trim(strWord, Both);
-            hightScores(i).score := Integer'Value(To_String(strWord));
-            i := i + 1;
-        end loop;
-        Close(fich);
+        begin
+            i := Index_highScores'First;
+            Open(fich,In_File,fileName);
+            while not End_Of_File(fich) and (i<=Index_highScores'Last) loop
+                strLine := To_Unbounded_String(Get_Line(fich));
+                ic := 1;
+                strWord := parseWord(ic, strLine , ';');
+                hightScores(i).name := strWord;
+                strWord := parseWord(ic, strLine , ';');
+                Ada.Strings.Unbounded.Trim(strWord, Both);
+                hightScores(i).score := Integer'Value(To_String(strWord));
+                i := i + 1;
+            end loop;
+            Close(fich);
+        exception
+            when Name_Error => null;
+        end;
 
     end loadHighScores;
 
