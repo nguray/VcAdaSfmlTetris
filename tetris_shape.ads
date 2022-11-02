@@ -7,7 +7,7 @@ with Sf.Graphics; use Sf.Graphics;
 
 with Game; use Game;
 
-package TetrisShape is
+package tetris_shape is
 
     type Vector2i is record
         x : sfInt32;
@@ -41,4 +41,4 @@ package TetrisShape is
     function isAlwaysOutLimit(tetro : in out Tetromino) return Boolean;
     function hitGround(tetro : in out Tetromino; board : in Game.arrBoard) return Boolean;
 
-end TetrisShape;
+end tetris_shape;

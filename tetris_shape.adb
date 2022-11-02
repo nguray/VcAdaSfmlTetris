@@ -9,7 +9,7 @@ with Sf.Graphics.VertexArray, Sf.Graphics.Vertex, Sf.Graphics.PrimitiveType, Sf.
 
 with Game; use Game;
 
-package body TetrisShape is
+package body tetris_shape is
 
     procedure Init(Self : in out Tetromino; typ : Integer; x : sfInt32; y : sfInt32) is
     begin
@@ -241,4 +241,4 @@ package body TetrisShape is
         return True;
     end isOutLRLimit;
 
-end TetrisShape;
+end tetris_shape;

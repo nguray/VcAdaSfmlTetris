@@ -26,9 +26,9 @@ with Sf.Window.Event, Sf.Window.Keyboard;
 use  Sf, Sf.Audio, Sf.Graphics, Sf.System, Sf.Window;
 
 with Game;
-with TetrisShape; use TetrisShape;
+with tetris_shape; use tetris_shape;
 
-procedure SfmlTetris is
+procedure sfml_tetris is
 
     type GameMode_Type is (STAND_BY,PLAY,GAME_OVER,HIGH_SCORES);
     curGameMode : GameMode_Type := STAND_BY;
@@ -424,11 +424,11 @@ procedure SfmlTetris is
                     when  Keyboard.sfKeyLeft =>
                         --
                         veloH := -1;
-                        isOutLimit := TetrisShape.isOutLeftLimit'Access;
+                        isOutLimit := tetris_shape.isOutLeftLimit'Access;
                     when Keyboard.sfKeyRight =>
                         --
                         veloH := 1;
-                        isOutLimit := TetrisShape.isOutRightLimit'Access;
+                        isOutLimit := tetris_shape.isOutRightLimit'Access;
                     when Keyboard.sfKeySpace =>
                         --
                         fDrop := True;
@@ -440,11 +440,11 @@ procedure SfmlTetris is
                     when  Keyboard.sfKeyLeft =>
                         --
                         veloH := 0;
-                        isOutLimit := TetrisShape.isAlwaysOutLimit'Access;
+                        isOutLimit := tetris_shape.isAlwaysOutLimit'Access;
                     when Keyboard.sfKeyRight =>
                         --
                         veloH := 0;
-                        isOutLimit := TetrisShape.isAlwaysOutLimit'Access;
+                        isOutLimit := tetris_shape.isAlwaysOutLimit'Access;
                    when  Keyboard.sfKeyDown =>
                         --
                         fFastDown := False;
@@ -1017,4 +1017,4 @@ begin
     RenderWindow.destroy(Win);
 
 
-end SfmlTetris;
+end sfml_tetris;

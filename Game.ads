@@ -5,7 +5,7 @@
 with Sf.Graphics.Color;
 with Sf.Graphics; use Sf.Graphics;
 
-package Game is
+package game is
 
     TOP   : constant := 10;
     LEFT  : constant := 10;
