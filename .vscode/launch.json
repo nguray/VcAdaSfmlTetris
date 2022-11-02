@@ -8,7 +8,7 @@
             "type": "gdb",
             "request": "launch",
             "name": "Debug",
-            "target": "${workspaceFolder}/SfmlTetris.exe",
+            "target": "${workspaceFolder}/sfml_tetris.exe",
             "cwd": "${workspaceFolder}",
             "valuesFormatting": "parseText",
             "preLaunchTask": "ada: Build current project",
