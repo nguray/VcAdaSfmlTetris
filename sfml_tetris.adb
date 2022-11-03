@@ -573,15 +573,15 @@ procedure sfml_tetris is
 
         Text.setString (textLine, "GAME OVER");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - Float(rectText.width)/2.0;
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
         txtY := Float(tetris_const.TOP + 3*tetris_const.CELL_SIZE);
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
-        txtY := txtY + Float(rectText.height)*3.0;
+        txtY := txtY + rectText.height*3.0;
         Text.setString (textLine, "Press SPACE to Continue");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - Float(rectText.width)/2.0;
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
@@ -604,15 +604,15 @@ procedure sfml_tetris is
 
         Text.setString (textLine, "ADA Tetris in SFML");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - Float(rectText.width)/2.0;
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
         txtY := Float(tetris_const.TOP + 3*tetris_const.CELL_SIZE);
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
-        txtY := txtY + Float(rectText.height)*3.0;
+        txtY := txtY + rectText.height*3.0;
         Text.setString (textLine, "Press SPACE to Play");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - Float(rectText.width)/2.0;
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
@@ -635,7 +635,7 @@ procedure sfml_tetris is
 
         Text.setString (textLine, "HIGH SCORES");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - Float(rectText.width)/2.0;
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
         txtY := Float(tetris_const.TOP + 2*tetris_const.CELL_SIZE);
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
@@ -666,7 +666,7 @@ procedure sfml_tetris is
             RenderWindow.DrawText (render, textLine);
 
             --
-            txtY := txtY + Float(rectText.height) + 10.0;
+            txtY := txtY + rectText.height + 10.0;
 
         end loop;
 
