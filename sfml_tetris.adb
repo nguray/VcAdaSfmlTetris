@@ -1,7 +1,7 @@
 --
 --         Simple Tetris Game Clone in ADA using SFML 
 --
---    Raymond NGUYEN THEN                       24-10-2022  
+--    Raymond NGUYEN THANH                      24-10-2022  
 -- 
 
 --with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
