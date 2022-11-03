@@ -609,6 +609,13 @@ procedure sfml_tetris is
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
+        txtY := txtY + rectText.height*3.5;
+        Text.setString (textLine, "R. NGUYEN THANH");
+        rectText := Text.getLocalBounds(textLine);
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
+        Text.setPosition (textLine, (X => txtX, Y => TxtY));
+        RenderWindow.DrawText (render, textLine);
+
         txtY := txtY + rectText.height*3.0;
         Text.setString (textLine, "Press SPACE to Play");
         rectText := Text.getLocalBounds(textLine);
