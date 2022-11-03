@@ -258,14 +258,14 @@ procedure sfml_tetris is
     end FreezeCurTetromino;
 
     function isHighScore(score : Integer) return Integer is
-        s : Integer;
     begin
-        for i in Index_highScores loop
-            s := hightScores(i).score;
-            if score>=hightScores(i).score then
-                return i;
-            end if;
-        end loop;
+        if score>0 then
+            for i in Index_highScores loop
+                if score>=hightScores(i).score then
+                    return i;
+                end if;
+            end loop;
+        end if;
         return 0;
     end isHighScore;
 
