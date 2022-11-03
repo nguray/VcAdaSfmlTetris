@@ -802,7 +802,7 @@ begin
             elsif horizontalMove/=0 then
                 --
                 elapseH := CLock.getElapsedTime(HTimer);
-                if elapseH.microseconds>25000 then
+                if elapseH.microseconds>20000 then
                     declare
                         backupX : sfInt32;
                     begin
@@ -918,7 +918,7 @@ begin
                             if fMove then
                                 if veloH /= 0 then
                                     elapseH := CLock.getElapsedTime(HTimer);
-                                    if elapseH.microseconds>15000 then
+                                    if elapseH.microseconds>12000 then
                                         declare
                                             backupX : sfInt32;
                                         begin
