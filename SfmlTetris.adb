@@ -436,11 +436,11 @@ procedure SfmlTetris is
                     when  Keyboard.sfKeyLeft =>
                         --
                         veloH := 0;
-                        isOutLimit := TetrisShape.isAlwaysOutLimit'Access;
+                        --isOutLimit := TetrisShape.isAlwaysOutLimit'Access;
                     when Keyboard.sfKeyRight =>
                         --
                         veloH := 0;
-                        isOutLimit := TetrisShape.isAlwaysOutLimit'Access;
+                        --isOutLimit := TetrisShape.isAlwaysOutLimit'Access;
                    when  Keyboard.sfKeyDown =>
                         --
                         fFastDown := False;
@@ -808,7 +808,7 @@ begin
                             backupX := curTetromino.x;
                             curTetromino.x := curTetromino.x + horizontalMove;
 
-                            if curTetromino.isOutLRLimit (horizontalMove) then
+                            if isOutLimit(curTetromino) then
                                 curTetromino.x := backupX;
                                 horizontalMove := 0;
                                 exit;
