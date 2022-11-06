@@ -175,11 +175,6 @@ package body tetris_shape is
         return b > (tetris_const.NB_ROWS*tetris_const.CELL_SIZE);
     end isOutBottomLimit;
 
-    function isAlwaysOutLimit(tetro : in out Tetromino) return Boolean is
-    begin
-        return True;
-    end isAlwaysOutLimit;
-
     function hitGround(tetro : in out Tetromino; board : in tetris_const.arrBoard) return Boolean is
         sx,sy     : Integer;
 

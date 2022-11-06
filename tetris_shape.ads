@@ -38,7 +38,6 @@ package tetris_shape is
     function isOutLeftLimit( Self : in out Tetromino) return Boolean;
     function isOutRightLimit(Self : in out Tetromino) return Boolean;
     function isOutBottomLimit(tetro : in out Tetromino) return Boolean;
-    function isAlwaysOutLimit(tetro : in out Tetromino) return Boolean;
     function hitGround(tetro : in out Tetromino; board : in tetris_const.arrBoard) return Boolean;
 
 end tetris_shape;

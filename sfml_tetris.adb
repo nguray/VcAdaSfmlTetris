@@ -764,7 +764,7 @@ begin
     initGame;
     curGameMode := STAND_BY;
     processEvent:= processStandByEvent'Access;
-    isOutLimit  := isAlwaysOutLimit'Access;
+    isOutLimit  := isOutLeftLimit'Access;
 
     HTimer := Clock.Create;
     VTimer := Clock.Create;
