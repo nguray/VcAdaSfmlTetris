@@ -1,12 +1,12 @@
 with "../ASFML/asfml.gpr";
 
-project SfmlTetris is
+project sfml_tetris is
 
    for Create_Missing_Dirs use "True";
 
    for Source_Dirs use (".");
    for Object_Dir use "obj";
-   for Main use ("SfmlTetris.adb");
+   for Main use ("sfml_tetris.adb");
    for Exec_Dir use ".";
 
    package Compiler is
@@ -17,4 +17,4 @@ project SfmlTetris is
 
    end Compiler;
 
-end SfmlTetris;
+end sfml_tetris;

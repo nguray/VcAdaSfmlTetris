@@ -5,7 +5,7 @@
 with Sf.Graphics.Color;
 with Sf.Graphics; use Sf.Graphics;
 
-package Game is
+package tetris_const is
 
     TOP   : constant := 10;
     LEFT  : constant := 10;
@@ -31,4 +31,4 @@ package Game is
             Color.fromRGB(red=>16#DA#, green => 16#AA#, blue => 0)
         );
 
-end Game;
+end tetris_const;

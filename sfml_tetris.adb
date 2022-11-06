@@ -1,7 +1,7 @@
 --
 --         Simple Tetris Game Clone in ADA using SFML 
 --
---    Raymond NGUYEN THEN                       24-10-2022  
+--    Raymond NGUYEN THANH                      24-10-2022  
 -- 
 
 --with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
@@ -25,10 +25,10 @@ with Sf.Window.Event, Sf.Window.Keyboard;
 
 use  Sf, Sf.Audio, Sf.Graphics, Sf.System, Sf.Window;
 
-with Game;
-with TetrisShape; use TetrisShape;
+with tetris_const;
+with tetris_shape; use tetris_shape;
 
-procedure SfmlTetris is
+procedure sfml_tetris is
 
     type GameMode_Type is (STAND_BY,PLAY,GAME_OVER,HIGH_SCORES);
     curGameMode : GameMode_Type := STAND_BY;
@@ -63,7 +63,7 @@ procedure SfmlTetris is
     type highScores_t is array (Index_highScores) of HightScore;
     hightScores : highScores_t := (others => (To_Unbounded_String("XXXXXX"),0));
 
-    board : Game.arrBoard := (others => 0);
+    board : tetris_const.arrBoard := (others => 0);
 
     subtype discreteRange_t is Integer range 0..13;
     package RandomInt is new Ada.Numerics.Discrete_Random(discreteRange_t);
@@ -146,30 +146,30 @@ procedure SfmlTetris is
 
         -- Draw Background
         v1.color := Color.fromRGB(10,10,100);
-        v1.position.x := Float(Game.LEFT);
-        v1.position.y := Float(Game.TOP);
+        v1.position.x := Float(tetris_const.LEFT);
+        v1.position.y := Float(tetris_const.TOP);
         VertexArray.append(vertex_arr, v1);
-        v1.position.x := Float(Game.LEFT+ Game.NB_COLUMNS *Game.CELL_SIZE);
+        v1.position.x := Float(tetris_const.LEFT+ tetris_const.NB_COLUMNS *tetris_const.CELL_SIZE);
         VertexArray.append(vertex_arr, v1);
-        v1.position.y := Float(Game.TOP + Game.NB_ROWS*Game.CELL_SIZE);
+        v1.position.y := Float(tetris_const.TOP + tetris_const.NB_ROWS*tetris_const.CELL_SIZE);
         VertexArray.append(vertex_arr, v1);
-        v1.position.x := Float(Game.LEFT);
+        v1.position.x := Float(tetris_const.LEFT);
         VertexArray.append(vertex_arr, v1);
 
-        for r in 0..(Game.NB_ROWS-1) loop
-            for c in 0..(Game.NB_COLUMNS-1) loop
+        for r in 0..(tetris_const.NB_ROWS-1) loop
+            for c in 0..(tetris_const.NB_COLUMNS-1) loop
 
-                t := board(r*Game.NB_COLUMNS+c);
+                t := board(r*tetris_const.NB_COLUMNS+c);
                 if (t /= 0) then
-                    v1.color := Game.tetrisColors(t);
-                    vx := Float(Game.LEFT + c*Game.CELL_SIZE) + 2.0;
-                    vy := Float(Game.TOP + r*Game.CELL_SIZE) + 2.0;
+                    v1.color := tetris_const.tetrisColors(t);
+                    vx := Float(tetris_const.LEFT + c*tetris_const.CELL_SIZE) + 2.0;
+                    vy := Float(tetris_const.TOP + r*tetris_const.CELL_SIZE) + 2.0;
                     v1.position.x := vx;
                     v1.position.y := vy;
                     VertexArray.append(vertex_arr, v1);
-                    v1.position.x := vx + Float(Game.CELL_SIZE) - 2.0;
+                    v1.position.x := vx + Float(tetris_const.CELL_SIZE) - 2.0;
                     VertexArray.append(vertex_arr, v1);
-                    v1.position.y := vy + Float(Game.CELL_SIZE) - 2.0;
+                    v1.position.y := vy + Float(tetris_const.CELL_SIZE) - 2.0;
                     VertexArray.append(vertex_arr, v1);
                     v1.position.x := vx;
                     VertexArray.append(vertex_arr, v1);
@@ -191,19 +191,19 @@ procedure SfmlTetris is
     procedure newTetromino is 
     begin
         curTetromino.ityp := nextTetromino.ityp;
-        curTetromino.Init(nextTetromino.ityp,6*Game.CELL_SIZE,0);
-        curTetromino.y := -(curTetromino.maxY*Game.CELL_SIZE);
-        nextTetromino.Init(TetrisRandomizer,(Game.NB_COLUMNS+3)*Game.CELL_SIZE,10*Game.CELL_SIZE);
+        curTetromino.Init(nextTetromino.ityp,6*tetris_const.CELL_SIZE,0);
+        curTetromino.y := -(curTetromino.maxY*tetris_const.CELL_SIZE);
+        nextTetromino.Init(TetrisRandomizer,(tetris_const.NB_COLUMNS+3)*tetris_const.CELL_SIZE,10*tetris_const.CELL_SIZE);
     end newTetromino;
 
     function computeCompletedLines return Integer is
         nbLines : Integer := 0;
         fCompleted : Boolean;
     begin
-        for r in 0..(Game.NB_ROWS-1) loop
+        for r in 0..(tetris_const.NB_ROWS-1) loop
             fCompleted := True;
-            for c in 0..(Game.NB_COLUMNS-1) loop
-                if board(r*Game.NB_COLUMNS+c)=0 then
+            for c in 0..(tetris_const.NB_COLUMNS-1) loop
+                if board(r*tetris_const.NB_COLUMNS+c)=0 then
                     fCompleted := False;
                     exit;
                 end if;
@@ -238,13 +238,13 @@ procedure SfmlTetris is
         x,y : Integer;
     begin
         if curTetromino.ityp /=0 then
-            ix := Integer((curTetromino.x + 1)/Game.CELL_SIZE);
-            iy := Integer((curTetromino.y + 1)/Game.CELL_SIZE);
+            ix := Integer((curTetromino.x + 1)/tetris_const.CELL_SIZE);
+            iy := Integer((curTetromino.y + 1)/tetris_const.CELL_SIZE);
             for p of curTetromino.v loop
                 x := ix + Integer(p.x);
                 y := iy + Integer(p.y);
-                if x>=0 and x<Game.NB_COLUMNS and y>=0 and y<Game.NB_ROWS then
-                    board(x + y*Game.NB_COLUMNS) := curTetromino.ityp;
+                if x>=0 and x<tetris_const.NB_COLUMNS and y>=0 and y<tetris_const.NB_ROWS then
+                    board(x + y*tetris_const.NB_COLUMNS) := curTetromino.ityp;
                 end if;
             end loop;
         end if;
@@ -258,14 +258,14 @@ procedure SfmlTetris is
     end FreezeCurTetromino;
 
     function isHighScore(score : Integer) return Integer is
-        s : Integer;
     begin
-        for i in Index_highScores loop
-            s := hightScores(i).score;
-            if score>=hightScores(i).score then
-                return i;
-            end if;
-        end loop;
+        if score>0 then
+            for i in Index_highScores loop
+                if score>=hightScores(i).score then
+                    return i;
+                end if;
+            end loop;
+        end if;
         return 0;
     end isHighScore;
 
@@ -321,29 +321,33 @@ procedure SfmlTetris is
         strLine : Unbounded_String;
         strWord : Unbounded_String;
     begin
-        i := Index_highScores'First;
-        Open(fich,In_File,fileName);
-        while not End_Of_File(fich) and (i<=Index_highScores'Last) loop
-            strLine := To_Unbounded_String(Get_Line(fich));
-            ic := 1;
-            strWord := parseWord(ic, strLine , ';');
-            hightScores(i).name := strWord;
-            strWord := parseWord(ic, strLine , ';');
-            Ada.Strings.Unbounded.Trim(strWord, Both);
-            hightScores(i).score := Integer'Value(To_String(strWord));
-            i := i + 1;
-        end loop;
-        Close(fich);
+        begin
+            i := Index_highScores'First;
+            Open(fich,In_File,fileName);
+            while not End_Of_File(fich) and (i<=Index_highScores'Last) loop
+                strLine := To_Unbounded_String(Get_Line(fich));
+                ic := 1;
+                strWord := parseWord(ic, strLine , ';');
+                hightScores(i).name := strWord;
+                strWord := parseWord(ic, strLine , ';');
+                Ada.Strings.Unbounded.Trim(strWord, Both);
+                hightScores(i).score := Integer'Value(To_String(strWord));
+                i := i + 1;
+            end loop;
+            Close(fich);
+        exception
+            when Name_Error => null;
+        end;
 
     end loadHighScores;
 
     procedure eraseFirstCompletedLine is
         fCompleted : Boolean;
     begin
-        for r in 0..(Game.NB_ROWS-1) loop
+        for r in 0..(tetris_const.NB_ROWS-1) loop
             fCompleted := True;
-            for c in 0..(Game.NB_COLUMNS-1) loop
-                if board(r*Game.NB_COLUMNS+c)=0 then
+            for c in 0..(tetris_const.NB_COLUMNS-1) loop
+                if board(r*tetris_const.NB_COLUMNS+c)=0 then
                     fCompleted := False;
                     exit;
                 end if;
@@ -351,8 +355,8 @@ procedure SfmlTetris is
             if fCompleted then
                 -- Shift down Board content
                 for r1 in reverse 1..r loop
-                    for c1 in 0..(Game.NB_COLUMNS-1) loop
-                        board(r1*Game.NB_COLUMNS+c1) := board((r1-1)*Game.NB_COLUMNS+c1);
+                    for c1 in 0..(tetris_const.NB_COLUMNS-1) loop
+                        board(r1*tetris_const.NB_COLUMNS+c1) := board((r1-1)*tetris_const.NB_COLUMNS+c1);
                     end loop;
                 end loop;
                 return;
@@ -420,11 +424,11 @@ procedure SfmlTetris is
                     when  Keyboard.sfKeyLeft =>
                         --
                         veloH := -1;
-                        isOutLimit := TetrisShape.isOutLeftLimit'Access;
+                        isOutLimit := tetris_shape.isOutLeftLimit'Access;
                     when Keyboard.sfKeyRight =>
                         --
                         veloH := 1;
-                        isOutLimit := TetrisShape.isOutRightLimit'Access;
+                        isOutLimit := tetris_shape.isOutRightLimit'Access;
                     when Keyboard.sfKeySpace =>
                         --
                         fDrop := True;
@@ -537,7 +541,7 @@ procedure SfmlTetris is
 
     function isGameOver return Boolean is
     begin
-        for c in 0..(Game.NB_COLUMNS-1) loop
+        for c in 0..(tetris_const.NB_COLUMNS-1) loop
             if board(c) /=0 then
                 return True;
             end if;
@@ -548,7 +552,7 @@ procedure SfmlTetris is
     procedure initGame is 
     begin
         curTetromino.ityp := 0;
-        nextTetromino.Init(TetrisRandomizer,(Game.NB_COLUMNS+3)*Game.CELL_SIZE,10*Game.CELL_SIZE);
+        nextTetromino.Init(TetrisRandomizer,(tetris_const.NB_COLUMNS+3)*tetris_const.CELL_SIZE,10*tetris_const.CELL_SIZE);
         board := (others => 0);
         curScore := 0;
         Text.setString (textScore, "SCORE : " & Tail(curScore'Image(curScore'Img'First + 1 .. curScore'Img'Last),6,'0'));
@@ -569,15 +573,15 @@ procedure SfmlTetris is
 
         Text.setString (textLine, "GAME OVER");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(Game.LEFT + (Game.NB_COLUMNS/2)*Game.CELL_SIZE) - Float(rectText.width)/2.0;
-        txtY := Float(Game.TOP + 3*Game.CELL_SIZE);
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
+        txtY := Float(tetris_const.TOP + 3*tetris_const.CELL_SIZE);
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
-        txtY := txtY + Float(rectText.height)*3.0;
+        txtY := txtY + rectText.height*3.0;
         Text.setString (textLine, "Press SPACE to Continue");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(Game.LEFT + (Game.NB_COLUMNS/2)*Game.CELL_SIZE) - Float(rectText.width)/2.0;
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
@@ -600,15 +604,22 @@ procedure SfmlTetris is
 
         Text.setString (textLine, "ADA Tetris in SFML");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(Game.LEFT + (Game.NB_COLUMNS/2)*Game.CELL_SIZE) - Float(rectText.width)/2.0;
-        txtY := Float(Game.TOP + 3*Game.CELL_SIZE);
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
+        txtY := Float(tetris_const.TOP + 3*tetris_const.CELL_SIZE);
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
-        txtY := txtY + Float(rectText.height)*3.0;
+        txtY := txtY + rectText.height*3.5;
+        Text.setString (textLine, "R. NGUYEN THANH");
+        rectText := Text.getLocalBounds(textLine);
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
+        Text.setPosition (textLine, (X => txtX, Y => TxtY));
+        RenderWindow.DrawText (render, textLine);
+
+        txtY := txtY + rectText.height*3.0;
         Text.setString (textLine, "Press SPACE to Play");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(Game.LEFT + (Game.NB_COLUMNS/2)*Game.CELL_SIZE) - Float(rectText.width)/2.0;
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
@@ -631,12 +642,12 @@ procedure SfmlTetris is
 
         Text.setString (textLine, "HIGH SCORES");
         rectText := Text.getLocalBounds(textLine);
-        txtX := Float(Game.LEFT + (Game.NB_COLUMNS/2)*Game.CELL_SIZE) - Float(rectText.width)/2.0;
-        txtY := Float(Game.TOP + 2*Game.CELL_SIZE);
+        txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2)*tetris_const.CELL_SIZE) - rectText.width/2.0;
+        txtY := Float(tetris_const.TOP + 2*tetris_const.CELL_SIZE);
         Text.setPosition (textLine, (X => txtX, Y => TxtY));
         RenderWindow.DrawText (render, textLine);
 
-        txtY := txtY + Float(2*Game.CELL_SIZE);
+        txtY := txtY + Float(2*tetris_const.CELL_SIZE);
 
         for i in 1..10 loop
 
@@ -651,18 +662,18 @@ procedure SfmlTetris is
                 Text.setColor (textLine, Color.fromRGB(255,255,0));
             end if;
 
-            txtX := Float(Game.LEFT + Game.CELL_SIZE);
+            txtX := Float(tetris_const.LEFT + tetris_const.CELL_SIZE);
             Text.setString (textLine, To_String(hightScores(i).Name));
             Text.setPosition (textLine, (X => txtX, Y => TxtY));
             RenderWindow.DrawText (render, textLine);
 
-            txtX := Float(Game.LEFT + (Game.NB_COLUMNS/2+2)*Game.CELL_SIZE);
+            txtX := Float(tetris_const.LEFT + (tetris_const.NB_COLUMNS/2+2)*tetris_const.CELL_SIZE);
             Text.setString (textLine, Tail(hightScores(i).score'Image(hightScores(i).score'Img'First + 1 .. hightScores(i).score'Img'Last),6,'0'));
             Text.setPosition (textLine, (X => txtX, Y => TxtY));
             RenderWindow.DrawText (render, textLine);
 
             --
-            txtY := txtY + Float(rectText.height) + 10.0;
+            txtY := txtY + rectText.height + 10.0;
 
         end loop;
 
@@ -724,7 +735,7 @@ begin
     KeyMap.Include(Integer(Keyboard.sfKeyNumpad9),'9');
 
 
-    Win := RenderWindow.Create(mode => (Game.WIN_WIDTH, Game.WIN_HEIGHT, 32), title => "Ada SFML Tetris");
+    Win := RenderWindow.Create(mode => (tetris_const.WIN_WIDTH, tetris_const.WIN_HEIGHT, 32), title => "Ada SFML Tetris");
     RenderWindow.SetVerticalSyncEnabled(Win, sfTrue);
 
     --Put_Line("CELL_SIZE = " & Integer'Image(Game.CELL_SIZE));
@@ -746,7 +757,7 @@ begin
     Text.setFont (textScore, GameFont);
     Text.setCharacterSize (textScore, 18);
     Text.setStyle(textScore, Sf.Graphics.Text.sfTextBold or Sf.Graphics.Text.sfTextItalic);
-    Text.setPosition (textScore, (X => Float(Game.LEFT), Y => Float(Game.TOP+Game.NB_ROWS*Game.CELL_SIZE+Game.CELL_SIZE/2)));
+    Text.setPosition (textScore, (X => Float(tetris_const.LEFT), Y => Float(tetris_const.TOP+tetris_const.NB_ROWS*tetris_const.CELL_SIZE+tetris_const.CELL_SIZE/2)));
     Text.setColor (textScore, Color.fromRGB(255,255,0));
 
     
@@ -798,7 +809,7 @@ begin
             elsif horizontalMove/=0 then
                 --
                 elapseH := CLock.getElapsedTime(HTimer);
-                if elapseH.microseconds>25000 then
+                if elapseH.microseconds>20000 then
                     declare
                         backupX : sfInt32;
                     begin
@@ -914,7 +925,7 @@ begin
                             if fMove then
                                 if veloH /= 0 then
                                     elapseH := CLock.getElapsedTime(HTimer);
-                                    if elapseH.microseconds>15000 then
+                                    if elapseH.microseconds>12000 then
                                         declare
                                             backupX : sfInt32;
                                         begin
@@ -1013,4 +1024,4 @@ begin
     RenderWindow.destroy(Win);
 
 
-end SfmlTetris;
+end sfml_tetris;

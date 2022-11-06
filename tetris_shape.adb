@@ -7,9 +7,9 @@ with Sf; use Sf;
 with Sf.Graphics; use Sf.Graphics;
 with Sf.Graphics.VertexArray, Sf.Graphics.Vertex, Sf.Graphics.PrimitiveType, Sf.Graphics.RenderWindow;
 
-with Game; use Game;
+with tetris_const; use tetris_const;
 
-package body TetrisShape is
+package body tetris_shape is
 
     procedure Init(Self : in out Tetromino; typ : Integer; x : sfInt32; y : sfInt32) is
     begin
@@ -157,22 +157,22 @@ package body TetrisShape is
     function isOutLeftLimit( Self : in out Tetromino) return Boolean is
         l : sfInt32;
     begin
-        l := Self.minX*Game.CELL_SIZE + Self.x;
+        l := Self.minX*tetris_const.CELL_SIZE + Self.x;
         return l < 0;
     end isOutLeftLimit;
 
     function isOutRightLimit(Self : in out Tetromino) return Boolean is
         r : sfInt32;
     begin
-        r := Self.maxX*Game.CELL_SIZE + Game.CELL_SIZE + Self.x;
-        return r > (Game.NB_COLUMNS*Game.CELL_SIZE);
+        r := Self.maxX*tetris_const.CELL_SIZE + tetris_const.CELL_SIZE + Self.x;
+        return r > (tetris_const.NB_COLUMNS*tetris_const.CELL_SIZE);
     end isOutRightLimit;
 
     function isOutBottomLimit(tetro : in out Tetromino) return Boolean is
         b : sfInt32;
     begin
-        b := tetro.maxY*Game.CELL_SIZE + Game.CELL_SIZE + tetro.y;
-        return b > (Game.NB_ROWS*Game.CELL_SIZE);
+        b := tetro.maxY*tetris_const.CELL_SIZE + tetris_const.CELL_SIZE + tetro.y;
+        return b > (tetris_const.NB_ROWS*tetris_const.CELL_SIZE);
     end isOutBottomLimit;
 
     function isAlwaysOutLimit(tetro : in out Tetromino) return Boolean is
@@ -180,17 +180,17 @@ package body TetrisShape is
         return True;
     end isAlwaysOutLimit;
 
-    function hitGround(tetro : in out Tetromino; board : in Game.arrBoard) return Boolean is
+    function hitGround(tetro : in out Tetromino; board : in tetris_const.arrBoard) return Boolean is
         ix,iy     : Integer;
         sx,sy     : Integer;
 
         function hit(x : Integer; y : Integer) return Boolean is
             ix,iy : Integer;
         begin
-            ix := x/Game.CELL_SIZE;
-            iy := y/Game.CELL_SIZE;
-            if (ix>=0) and (ix<Game.NB_COLUMNS) and (iy>=0) and (iy<Game.NB_ROWS) then
-                if (board(iy*Game.NB_COLUMNS+ix)/=0) then 
+            ix := x/tetris_const.CELL_SIZE;
+            iy := y/tetris_const.CELL_SIZE;
+            if (ix>=0) and (ix<tetris_const.NB_COLUMNS) and (iy>=0) and (iy<tetris_const.NB_ROWS) then
+                if (board(iy*tetris_const.NB_COLUMNS+ix)/=0) then 
                     return True;
                 end if;
             end if;
@@ -202,26 +202,26 @@ package body TetrisShape is
 
         for p of tetro.v loop
 
-            sx := Integer(p.x*Game.CELL_SIZE + tetro.x + 1);
-            sy := Integer(p.y*Game.CELL_SIZE + tetro.y + 1);
+            sx := Integer(p.x*tetris_const.CELL_SIZE + tetro.x + 1);
+            sy := Integer(p.y*tetris_const.CELL_SIZE + tetro.y + 1);
             if hit(sx, sy) then
                 return True;
             end if;
 
-            sx := Integer(p.x*Game.CELL_SIZE + Game.CELL_SIZE -1 + tetro.x);
-            sy := Integer(p.y*Game.CELL_SIZE + tetro.y + 1);
+            sx := Integer(p.x*tetris_const.CELL_SIZE + tetris_const.CELL_SIZE -1 + tetro.x);
+            sy := Integer(p.y*tetris_const.CELL_SIZE + tetro.y + 1);
             if hit(sx, sy) then
                 return True;
             end if;
 
-            sx := Integer(p.x*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.x);
-            sy := Integer(p.y*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.y);
+            sx := Integer(p.x*tetris_const.CELL_SIZE + tetris_const.CELL_SIZE - 1 + tetro.x);
+            sy := Integer(p.y*tetris_const.CELL_SIZE + tetris_const.CELL_SIZE - 1 + tetro.y);
             if hit(sx, sy) then
                 return True;
             end if;
 
-            sx := Integer(p.x*Game.CELL_SIZE + tetro.x + 1);
-            sy := Integer(p.y*Game.CELL_SIZE + Game.CELL_SIZE - 1 + tetro.y);
+            sx := Integer(p.x*tetris_const.CELL_SIZE + tetro.x + 1);
+            sy := Integer(p.y*tetris_const.CELL_SIZE + tetris_const.CELL_SIZE - 1 + tetro.y);
             if hit(sx, sy) then
                 return True;
             end if;
@@ -241,4 +241,4 @@ package body TetrisShape is
         return True;
     end isOutLRLimit;
 
-end TetrisShape;
+end tetris_shape;
