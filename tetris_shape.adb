@@ -181,7 +181,6 @@ package body tetris_shape is
     end isAlwaysOutLimit;
 
     function hitGround(tetro : in out Tetromino; board : in tetris_const.arrBoard) return Boolean is
-        ix,iy     : Integer;
         sx,sy     : Integer;
 
         function hit(x : Integer; y : Integer) return Boolean is
