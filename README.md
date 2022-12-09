@@ -1,2 +1,2 @@
 # VcAdaSfmlTetris
-Very Simple Tetris Clone Using SFML Library
+ADA SFML Simple Tetris Clone
