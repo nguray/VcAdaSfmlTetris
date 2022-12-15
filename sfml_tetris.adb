@@ -217,20 +217,19 @@ procedure sfml_tetris is
 
     function computeScore(nbLines : Integer) return Integer is
     begin
-        case nbLines is
+        return (case nbLines is
             when 0 =>
-                return 0;
+                0,
             when 1 =>
-                return 40;
+                40,
             when 2 =>
-                return 100;
+                100,
             when 3 =>
-                return 300;
+                300,
             when 4 =>
-                return 1200;
+                1200,
             when others =>
-                return 2000;
-        end case;
+                2000);
     end;
 
     procedure FreezeCurTetromino is
