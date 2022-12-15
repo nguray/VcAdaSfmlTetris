@@ -61,7 +61,7 @@ procedure sfml_tetris is
 
     subtype Index_highScores is Integer range 1 .. 10;
     type highScores_t is array (Index_highScores) of HightScore;
-    hightScores : highScores_t := (others => (To_Unbounded_String("XXXXXX"),0));
+    hightScores : highScores_t := (others => (To_Unbounded_String("XXXXX"),0));
 
     board : tetris_const.arrBoard := (others => 0);
 
