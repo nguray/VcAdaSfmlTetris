@@ -367,11 +367,12 @@ procedure sfml_tetris is
     procedure processPlayEvent (win : sfRenderWindow_Ptr;evt : in Event.sfEvent) is
         backupX : sfInt32;
     begin
+
         case Evt.eventType is
             when Event.sfEvtClosed =>
                 RenderWindow.Close (Win);
             when Event.sfEvtKeyPressed =>
-                
+
                 case Evt.key.code is
                     when  Keyboard.sfKeyEscape =>
                         --
@@ -735,6 +736,8 @@ begin
 
 
     Win := RenderWindow.Create(mode => (tetris_const.WIN_WIDTH, tetris_const.WIN_HEIGHT, 32), title => "Ada SFML Tetris");
+    RenderWindow.setKeyRepeatEnabled(Win, enabled => false);
+
     RenderWindow.SetVerticalSyncEnabled(Win, sfTrue);
 
     --Put_Line("CELL_SIZE = " & Integer'Image(Game.CELL_SIZE));
