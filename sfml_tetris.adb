@@ -78,7 +78,8 @@ procedure sfml_tetris is
     horizontalMove : sfInt32 := 0;
     horizontalMoveStartColumn : Integer := 0;
 
-    fFastDown : Boolean := False;
+    fFastDown   : Boolean := False;
+    fPause      : Boolean := False;
     fEscapePlayMode : Boolean := False;
 
     package Character_Ordered_Maps is new
@@ -377,6 +378,14 @@ procedure sfml_tetris is
                     when  Keyboard.sfKeyEscape =>
                         --
                         fEscapePlayMode := True;
+                    when Keyboard.sfKeyPause =>
+                        if fPause then
+                            fPause := False;
+                            Music.play(tetrisMusic);                            
+                        else
+                            fPause := True;
+                            Music.pause(tetrisMusic);
+                        end if;
                     when  Keyboard.sfKeyUp =>
                         --
                         curTetromino.rotateLeft;
@@ -796,7 +805,7 @@ begin
         end loop;
 
         -- Update game state
-        if curGameMode=PLAY then
+        if curGameMode=PLAY and (not fPause) then
 
             if nbCompledLines>0 then
                 --
