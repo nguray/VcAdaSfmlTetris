@@ -123,11 +123,11 @@ procedure sfml_tetris is
                  tetrisBag(discreteRange_t'First) := ityp;
             end loop;
 
-            for it of tetrisBag loop
-                Put(it'Image);
-                Put(" ");
-            end loop;
-            New_Line;
+            --  for it of tetrisBag loop
+            --      Put(it'Image);
+            --      Put(" ");
+            --  end loop;
+            --  New_Line;
 
             ityp := tetrisBag(discreteRange_t'First);
             iTetrisBag := 1;
