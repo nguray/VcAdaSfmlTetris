@@ -426,7 +426,6 @@ procedure sfml_tetris is
                             end if;
                         end if;
 
-
                     when  Keyboard.sfKeyDown =>
                         --
                         fFastDown := True;
